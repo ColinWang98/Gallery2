@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mindverse Gallery</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --secondary: #7e22ce;
+      --accent: #f59e0b;
+      --light: #e0e7ff;
+      --dark: #1e293b;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+      margin: 0;
+      overflow-x: hidden;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--light);
+    }
+    
+    #p5-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .model-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      margin-bottom: 1rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      width: 180px; /* 默认卡片宽度 */
+    }
+    
+    .model-card:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+      background: white;
+    }
+    
+    .card-image {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 3/4;
+    }
+    
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    
+    .model-card:hover .card-image img {
+      transform: scale(1.08);
+    }
+    
+    .card-content {
+      padding: 0.8rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 60px;
+    }
+    
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--dark);
+      text-align: center;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.3;
+    }
+    
+    header, footer, .page-title {
+      position: relative;
+      z-index: 2;
+    }
+    
+    .page-title {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: white;
+      padding: 1.5rem 0 0.5rem;
+      text-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+      margin-top: 0.5rem;
+    }
+    
+    .page-subtitle {
+      text-align: center;
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: 0 auto 1.5rem;
+      color: rgba(255, 255, 255, 0.9);
+      padding: 0 1rem;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 2rem 0 1.5rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+    }
+    
+    .search-container {
+      max-width: 700px;
+      margin: 0 auto 2rem;
+      padding: 0 1rem;
+    }
+    
+    .search-box {
+      position: relative;
+    }
+    
+    .search-box input {
+      width: 100%;
+      padding: 0.9rem 1.5rem 0.9rem 4rem;
+      border-radius: 50px;
+      border: none;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .search-box input:focus {
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      outline: none;
+    }
+    
+    .search-box i {
+      position: absolute;
+      left: 1.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary);
+      font-size: 1.2rem;
+    }
+    
+    .category-filter {
+      display: flex;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .category-btn {
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      border-radius: 50px;
+      padding: 0.5rem 1.2rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .category-btn:hover, .category-btn.active {
+      background: white;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .category-btn.active {
+      background: var(--accent);
+      color: white;
+    }
+    
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 1rem;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .empty-state i {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+    
+    .empty-state h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
+    
+    .empty-state p {
+      color: #64748b;
+      max-width: 500px;
+      margin: 0 auto;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+    
+    .loading-spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s linear infinite;
+    }
+    
+    /* 卡片大小控制 */
+    .size-control {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin: 0 auto 1.5rem;
+      max-width: 700px;
+      padding: 0 1rem;
+    }
+    
+    .size-label {
+      font-weight: 500;
+      color: white;
+      font-size: 0.9rem;
+    }
+    
+    .size-slider {
+      flex: 1;
+      max-width: 300px;
+      -webkit-appearance: none;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.3);
+      outline: none;
+    }
+    
+    .size-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+    
+    .size-slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+    
+    .size-indicator {
+      width: 40px;
+      text-align: center;
+      font-weight: 600;
+      color: white;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 0.3rem 0.5rem;
+      border-radius: 0.5rem;
+    }
+    
+    /* 卡片尺寸类 */
+    .card-size-xs { width: 140px; }
+    .card-size-sm { width: 160px; }
+    .card-size-md { width: 180px; }
+    .card-size-lg { width: 200px; }
+    .card-size-xl { width: 220px; }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 1.8rem;
+        padding: 1rem 0 0.5rem;
+      }
+      .page-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+      }
+      .category-filter {
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+      .category-btn {
+        padding: 0.4rem 1rem;
+        font-size: 0.85rem;
+      }
+      .size-control {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .size-slider {
+        max-width: 100%;
+      }
+      .model-card {
+        width: 160px; /* 移动端默认卡片宽度 */
+      }
+      .card-size-xs { width: 120px; }
+      .card-size-sm { width: 140px; }
+      .card-size-md { width: 160px; }
+      .card-size-lg { width: 180px; }
+      .card-size-xl { width: 200px; }
+    }
+    
+    @media (max-width: 480px) {
+      .page-title {
+        font-size: 1.6rem;
+      }
+      .model-card {
+        width: 140px; /* 小屏幕默认卡片宽度 */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="p5-canvas"></div>
+  
+  <header class="bg-white/95 backdrop-blur-lg sticky top-0 shadow-lg z-10">
+    <div class="container mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between">
+      <a href="/gallery2/" class="logo text-2xl font-bold text-indigo-600 flex items-center gap-2 mb-3 sm:mb-0">
+        <i class="fas fa-cube"></i> Mindverse Gallery
+      </a>
+    </div>
+  </header>
+
+  <div class="page-title">探索 Mindverse 艺术世界</div>
+  <div class="page-subtitle">浏览我们精心策划的数字艺术收藏，体验沉浸式视觉盛宴</div>
+
+  <div class="search-container">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="search-input" placeholder="搜索模型...">
+    </div>
+  </div>
+
+  <!-- 卡片大小控制 -->
+  <div class="size-control">
+    <span class="size-label">卡片大小</span>
+    <input type="range" min="1" max="5" value="3" class="size-slider" id="size-slider">
+    <span class="size-indicator" id="size-indicator">中</span>
+  </div>
+
+  <div class="category-filter" id="category-filter">
+    <button class="category-btn active" data-category="all">全部</button>
+    <!-- 分类按钮将通过JS动态生成 -->
+  </div>
+
+  <main class="container mx-auto px-4 py-4">
+    <div id="gallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4" data-masonry='{ "itemSelector": ".model-card", "columnWidth": ".grid-sizer" }'>
+      <div class="grid-sizer"></div>
+      <!-- 模型卡片将通过JS动态加载 -->
+    </div>
+  </main>
+
+  <footer>
+    <div>© 2025 Mindverse</div>
+  </footer>
+
+  <script>
+    // ==============================
+    // 全局变量和配置
+    // ==============================
+    const gallery = document.getElementById('gallery');
+    const categoryFilter = document.getElementById('category-filter');
+    const searchInput = document.getElementById('search-input');
+    const sizeSlider = document.getElementById('size-slider');
+    const sizeIndicator = document.getElementById('size-indicator');
+    
+    let masonry = null;
+    let allModels = [];
+    let categories = new Set();
+    let currentCardSize = 'md'; // 默认卡片大小
+    
+    // 卡片大小映射
+    const sizeMap = {
+      1: { class: 'xs', label: '特小' },
+      2: { class: 'sm', label: '小' },
+      3: { class: 'md', label: '中' },
+      4: { class: 'lg', label: '大' },
+      5: { class: 'xl', label: '特大' }
+    };
+    
+    // ==============================
+    // p5.js 粒子背景
+    // ==============================
+    let particles = [];
+    let mouseTrail = [];
+    const maxTrail = 30;
+    const disturbanceForce = 0.08;
+    const springForce = 0.03;
+    const numParticles = 300;
+    const connectDistance = 90;
+
+    function setup() {
+      let canvasHeight = Math.max(window.innerHeight, document.body.scrollHeight);
+      let canvas = createCanvas(window.innerWidth, canvasHeight);
+      canvas.id('p5-canvas');
+      canvas.style('display', 'block');
+      for (let i = 0; i < numParticles; i++) {
+        let x = random(0, window.innerWidth);
+        let y = random(0, canvasHeight);
+        particles.push(new Particle(x, y));
+      }
+    }
+
+    function draw() {
+      let c1 = color('#4f46e5');
+      let c2 = color('#7e22ce');
+      for (let y = 0; y < height; y++) {
+        let c = lerpColor(c1, c2, y / height);
+        stroke(c);
+        line(0, y, width, y);
+      }
+      mouseTrail.push(createVector(mouseX, mouseY));
+      if (mouseTrail.length > maxTrail) {
+        mouseTrail.shift();
+      }
+      for (let p of particles) {
+        p.update();
+      }
+      stroke(255, 30);
+      strokeWeight(0.5);
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          let p1 = particles[i];
+          let p2 = particles[j];
+          let dist = p1.position.dist(p2.position);
+          if (dist < connectDistance) {
+            line(p1.position.x, p1.position.y, p2.position.x, p2.position.y);
+          }
+        }
+      }
+      for (let p of particles) {
+        p.display();
+      }
+    }
+
+    function windowResized() {
+      let canvasHeight = Math.max(window.innerHeight, document.body.scrollHeight);
+      resizeCanvas(window.innerWidth, canvasHeight);
+      particles = [];
+      for (let i = 0; i < numParticles; i++) {
+        let x = random(0, window.innerWidth);
+        let y = random(0, canvasHeight);
+        particles.push(new Particle(x, y));
+      }
+      
+      // 重新布局Masonry
+      if (masonry) {
+        setTimeout(() => {
+          masonry.layout();
+        }, 100);
+      }
+    }
+
+    class Particle {
+      constructor(x, y) {
+        this.origin = createVector(x, y);
+        this.position = createVector(x, y);
+        this.velocity = createVector(0, 0);
+        this.lifespan = 200;
+      }
+
+      update() {
+        for (let m of mouseTrail) {
+          let dir = p5.Vector.sub(m, this.position);
+          let distance = dir.mag();
+          if (distance > 5 && distance < 160) {
+            dir.normalize();
+            let force = disturbanceForce * (160 - distance) / 160;
+            dir.mult(force);
+            this.velocity.add(dir);
+          }
+        }
+        let restore = p5.Vector.sub(this.origin, this.position);
+        restore.mult(springForce);
+        this.velocity.add(restore);
+        this.velocity.mult(0.92);
+        this.position.add(this.velocity);
+        this.position.x = constrain(this.position.x, 0, width);
+        this.position.y = constrain(this.position.y, 0, height);
+      }
+
+      display() {
+        noStroke();
+        fill(255, this.lifespan);
+        ellipse(this.position.x, this.position.y, 4, 4);
+      }
+    }
+    
+    // ==============================
+    // 模型画廊功能
+    // ==============================
+    
+    // 从服务器获取模型数据
+    async function fetchModels() {
+      try {
+        const response = await fetch('/gallery2/api/models');
+        
+        if (!response.ok) {
+          throw new Error(`模型加载失败: ${response.status}`);
+        }
+        
+        const modelIds = await response.json();
+        
+        // 确保返回的是数组
+        if (!Array.isArray(modelIds)) {
+          throw new Error('API 返回的数据格式无效');
+        }
+        
+        if (modelIds.length === 0) {
+          console.warn('API 返回空模型列表，使用示例模型');
+          return [{
+            id: "sample-model",
+            title: "示例模型",
+            category: "示例",
+          }];
+        }
+        
+        // 并行获取所有模型元数据
+        const models = await Promise.all(modelIds.map(async id => {
+          try {
+            const modelResponse = await fetch(`/gallery2/api/models/${id}`);
+            
+            if (!modelResponse.ok) {
+              console.error(`获取模型 ${id} 失败: ${modelResponse.status}`);
+              return {
+                id: id,
+                title: `模型 ${id}`,
+                category: "未知分类",
+              };
+            }
+            
+            const modelData = await modelResponse.json();
+            
+            // 去除"未命名模型"字样
+            const title = modelData.title || id;
+            
+            return {
+              id: modelData.id || id,
+              title: title.replace("未命名模型 ", ""), // 去除"未命名模型"前缀
+              category: modelData.category || "未分类",
+            };
+          } catch (e) {
+            console.error(`加载模型 ${id} 的元数据失败:`, e);
+            return {
+              id: id,
+              title: `模型 ${id}`,
+              category: "错误",
+            };
+          }
+        }));
+        
+        // 过滤无效模型
+        return models.filter(model => model !== null);
+      } catch (error) {
+        console.error('加载模型失败:', error);
+        
+        // 返回示例模型作为后备
+        return [{
+          id: "sample-model",
+          title: "示例模型",
+          category: "示例",
+        }];
+      }
+    }
+    
+    // 渲染模型卡片
+    function renderModelCards(models) {
+      // 清空画廊
+      gallery.innerHTML = '<div class="grid-sizer"></div>';
+      
+      if (!models || models.length === 0) {
+        const emptyState = document.createElement('div');
+        emptyState.className = 'empty-state';
+        emptyState.innerHTML = `
+          <i class="fas fa-box-open"></i>
+          <h3>没有找到模型</h3>
+          <p>模型目录为空，或没有匹配的模型</p>
+        `;
+        gallery.appendChild(emptyState);
+        return;
+      }
+      
+      // 创建图片加载队列
+      const imageQueue = [];
+      
+      models.forEach(model => {
+        const placeholder = generatePlaceholder(model.id);
+        const card = document.createElement('div');
+        card.className = `model-card card-size-${currentCardSize}`;
+        
+        card.onclick = () => { 
+          window.location.href = `/gallery2/viewer.html?id=${model.id}`;
+        };
+        
+        const imgSrc = `/gallery2/models/${model.id}.jpg`;
+        card.innerHTML = `
+          <div class="card-image">
+            <img src="${imgSrc}" alt="${model.title}" 
+                 onerror="this.onerror=null; this.src='${placeholder}'">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">${model.title}</h3>
+          </div>
+        `;
+        gallery.appendChild(card);
+        
+        // 添加到图片预加载队列
+        imageQueue.push({
+          img: card.querySelector('img'),
+          src: imgSrc
+        });
+      });
+      
+      // 图片预加载
+      preloadImages(imageQueue);
+      
+      // 重新初始化Masonry
+      setTimeout(initMasonry, 50);
+    }
+    
+    // 图片预加载函数
+    function preloadImages(queue) {
+      queue.forEach(item => {
+        const img = new Image();
+        img.src = item.src;
+        img.onload = () => {
+          if (item.img.src !== img.src) {
+            item.img.src = img.src;
+          }
+          // 图片加载后重新布局
+          if (masonry) {
+            masonry.layout();
+          }
+        };
+        img.onerror = () => {
+          item.img.src = generatePlaceholder(item.img.alt || '');
+          // 错误处理后重新布局
+          if (masonry) {
+            masonry.layout();
+          }
+        };
+      });
+    }
+    
+    // 生成占位符图片
+    function generatePlaceholder(modelId) {
+      const shortId = modelId.length > 15 ? modelId.substring(0, 15) + '...' : modelId;
+      return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="400" viewBox="0 0 300 400">
+          <rect fill="#4f46e5" width="300" height="400"/>
+          <text fill="#ffffff" font-family="Arial" font-size="50" font-weight="bold" text-anchor="middle" x="150" y="180">3D</text>
+          <text fill="#ffffff" font-family="Arial" font-size="24" text-anchor="middle" x="150" y="250">${shortId}</text>
+        </svg>`
+      )}`;
+    }
+    
+    // 初始化Masonry布局
+    function initMasonry() {
+      if (masonry) {
+        masonry.destroy();
+      }
+      masonry = new Masonry(gallery, {
+        itemSelector: '.model-card',
+        columnWidth: '.grid-sizer',
+        percentPosition: true,
+        gutter: 15
+      });
+    }
+    
+    // 设置分类筛选
+    function setupCategoryFilter() {
+      // 清空分类按钮
+      categoryFilter.innerHTML = '<button class="category-btn active" data-category="all">全部</button>';
+      
+      // 添加分类按钮
+      categories.forEach(category => {
+        const button = document.createElement('button');
+        button.className = 'category-btn';
+        button.textContent = category;
+        button.dataset.category = category;
+        button.addEventListener('click', () => {
+          // 更新活动按钮
+          document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.classList.remove('active');
+          });
+          button.classList.add('active');
+          
+          // 筛选模型
+          filterModels();
+        });
+        categoryFilter.appendChild(button);
+      });
+    }
+    
+    // 筛选模型
+    function filterModels() {
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      const activeCategory = document.querySelector('.category-btn.active').dataset.category;
+      
+      let filteredModels = allModels;
+      
+      // 应用搜索过滤
+      if (searchTerm) {
+        filteredModels = filteredModels.filter(model => 
+          model.title.toLowerCase().includes(searchTerm) || 
+          (model.category && model.category.toLowerCase().includes(searchTerm))
+        );
+      }
+      
+      // 应用分类过滤（"全部"除外）
+      if (activeCategory !== 'all') {
+        filteredModels = filteredModels.filter(model => 
+          model.category === activeCategory
+        );
+      }
+      
+      // 渲染结果
+      renderModelCards(filteredModels);
+    }
+    
+    // 改变卡片大小
+    function changeCardSize(sizeValue) {
+      // 获取大小配置
+      const sizeConfig = sizeMap[sizeValue];
+      if (!sizeConfig) return;
+      
+      // 更新指示器
+      sizeIndicator.textContent = sizeConfig.label;
+      
+      // 更新当前卡片大小
+      currentCardSize = sizeConfig.class;
+      
+      // 更新所有卡片大小
+      const cards = document.querySelectorAll('.model-card');
+      cards.forEach(card => {
+        // 移除所有尺寸类
+        card.classList.remove('card-size-xs', 'card-size-sm', 'card-size-md', 'card-size-lg', 'card-size-xl');
+        // 添加新尺寸类
+        card.classList.add(`card-size-${currentCardSize}`);
+      });
+      
+      // 重新布局
+      if (masonry) {
+        masonry.layout();
+      }
+    }
+    
+    // 初始化模型数据
+    async function initModelData() {
+      // 显示加载状态
+      const loading = document.createElement('div');
+      loading.className = 'empty-state';
+      loading.innerHTML = `
+        <div class="loading-spinner"></div>
+        <h3>加载模型中...</h3>
+        <p>正在从服务器获取模型数据</p>
+      `;
+      gallery.innerHTML = '';
+      gallery.appendChild(loading);
+      
+      try {
+        // 获取模型数据
+        allModels = await fetchModels();
+        
+        // 确保 allModels 是数组
+        if (!Array.isArray(allModels)) {
+          allModels = [];
+        }
+        
+        // 提取分类
+        categories = new Set();
+        allModels.forEach(model => {
+          if (model.category) {
+            categories.add(model.category);
+          }
+        });
+        
+        // 设置分类筛选
+        setupCategoryFilter();
+        
+        // 渲染模型
+        filterModels();
+      } catch (error) {
+        console.error('初始化模型数据失败:', error);
+        
+        const errorState = document.createElement('div');
+        errorState.className = 'empty-state';
+        errorState.innerHTML = `
+          <i class="fas fa-exclamation-triangle"></i>
+          <h3>加载模型失败</h3>
+          <p>${error.message || '请检查服务器连接'}</p>
+          <button class="retry-btn mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md">
+            重新加载
+          </button>
+        `;
+        
+        gallery.innerHTML = '';
+        gallery.appendChild(errorState);
+        
+        // 添加重试按钮事件
+        document.querySelector('.retry-btn')?.addEventListener('click', initModelData);
+      }
+    }
+    
+    // ==============================
+    // 初始化应用
+    // ==============================
+    window.addEventListener('load', () => {
+      // 初始化粒子背景
+      setup();
+      
+      // 设置事件监听器
+      searchInput.addEventListener('input', () => {
+        filterModels();
+      });
+      
+      // 设置卡片大小滑块事件
+      sizeSlider.addEventListener('input', (e) => {
+        changeCardSize(parseInt(e.target.value));
+      });
+      
+      // 初始卡片大小设置
+      changeCardSize(parseInt(sizeSlider.value));
+      
+      // 加载模型数据
+      initModelData();
+      
+      // 添加窗口调整大小事件监听
+      window.addEventListener('resize', () => {
+        if (masonry) {
+          masonry.layout();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
