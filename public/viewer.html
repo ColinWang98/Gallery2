@@ -19,7 +19,7 @@
       font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
       margin: 0;
       overflow: hidden;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background: #0f172a;
       transition: background 0.8s ease;
       color: white;
     }
@@ -64,14 +64,46 @@
       color: var(--accent);
     }
 
+    .like-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .lang-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      border-radius: 50px;
+      padding: 0.5rem 1rem;
+      color: white;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .lang-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+
+
     .controls {
-      position: absolute;
-      bottom: 2rem;
+      position: fixed;
+      bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 10;
       display: flex;
-      gap: 1.5rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      max-width: calc(100vw - 40px);
       background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(10px);
       padding: 1rem 2rem;
@@ -83,18 +115,19 @@
     .btn {
       background: rgba(255, 255, 255, 0.92);
       color: var(--dark);
-      padding: 0.9rem 1.8rem;
-      border-radius: 50px;
-      font-size: 1rem;
-      font-weight: 500;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.5rem;
       cursor: pointer;
-      transition: var(--transition);
+      font-size: 0.85rem;
+      font-weight: 500;
       display: flex;
       align-items: center;
-      gap: 0.7rem;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-      border: 1px solid rgba(209, 213, 219, 0.3);
-      min-width: 150px;
+      gap: 0.4rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease;
+      min-width: 70px;
+      height: 2.2rem;
       justify-content: center;
     }
 
@@ -108,38 +141,55 @@
       font-size: 1.2rem;
     }
 
+    /* 点赞按钮特殊样式 */
+    #like-btn.liked {
+      background: #ef4444 !important;
+      color: white !important;
+    }
+
+    #like-btn.liked:hover {
+      background: #dc2626 !important;
+    }
+
+    #like-btn.liked i {
+      color: white;
+    }
+
     .color-picker-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.3rem;
       background: rgba(255, 255, 255, 0.92);
-      padding: 0.8rem 1.5rem;
-      border-radius: 50px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      min-width: 200px;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      min-width: 120px;
     }
+
+
 
     .color-picker-label {
       font-weight: 600;
       color: var(--dark);
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.3rem;
+      font-size: 0.85rem;
     }
 
     .color-picker {
       display: flex;
-      gap: 0.7rem;
+      gap: 0.3rem;
     }
 
     .color-option {
-      width: 30px;
-      height: 30px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       cursor: pointer;
-      transition: var(--transition);
       border: 2px solid transparent;
+      transition: all 0.2s ease;
     }
 
     .color-option:hover {
@@ -147,10 +197,10 @@
     }
 
     .color-option.active {
-      border-color: white;
-      box-shadow: 0 0 0 3px var(--dark);
-      transform: scale(1.2);
+      border: 3px solid #3b82f6;
     }
+
+
 
     .error-message {
       position: absolute;
@@ -248,23 +298,315 @@
       opacity: 1;
     }
 
+    /* 截图菜单样式 */
+    .screenshot-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      backdrop-filter: blur(5px);
+    }
+
+    .screenshot-menu-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      position: relative;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .screenshot-menu-content h3 {
+      color: var(--dark);
+      margin: 0 0 1.5rem 0;
+      font-size: 1.3rem;
+    }
+
+    .screenshot-options {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .screenshot-btn {
+      background: var(--primary);
+      color: white;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+    }
+
+    .screenshot-btn:hover {
+      background: var(--secondary);
+      transform: translateY(-2px);
+    }
+
+    .screenshot-btn:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .screenshot-btn:disabled:hover {
+      background: #9ca3af;
+      transform: none;
+    }
+
+    /* 分享菜单样式 */
+    .share-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      backdrop-filter: blur(5px);
+    }
+
+    .share-menu-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      position: relative;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    .share-menu-content h3 {
+      color: var(--dark);
+      margin: 0 0 1.5rem 0;
+      font-size: 1.3rem;
+    }
+
+    .share-options {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .share-link-container {
+      text-align: left;
+    }
+
+    .share-link-container label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .link-input-group {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .link-input-group input {
+      flex: 1;
+      padding: 0.8rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+      background: #f9fafb;
+      color: var(--dark);
+    }
+
+    .link-input-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .copy-btn {
+      background: var(--primary);
+      color: white;
+      padding: 0.8rem 1.2rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+    }
+
+    .copy-btn:hover {
+      background: var(--secondary);
+      transform: translateY(-1px);
+    }
+
+    .share-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .share-action-btn {
+      background: var(--accent);
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .share-action-btn:hover {
+      background: #d97706;
+      transform: translateY(-1px);
+    }
+
+    /* 二维码模态框样式 */
+    .qr-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+      backdrop-filter: blur(5px);
+    }
+
+    .qr-modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      position: relative;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .qr-modal-content h3 {
+      color: var(--dark);
+      margin: 0 0 1.5rem 0;
+      font-size: 1.3rem;
+    }
+
+    #qr-code-container {
+      display: flex;
+      justify-content: center;
+      margin: 1rem 0;
+      padding: 1rem;
+      background: #f9fafb;
+      border-radius: 0.5rem;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      color: #666;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    .close-btn:hover {
+      background: #f1f5f9;
+      color: var(--dark);
+    }
+
     @media (max-width: 768px) {
       .header {
         padding: 1rem;
       }
 
       .controls {
-        flex-direction: column;
-        bottom: 1rem;
-        gap: 0.8rem;
-        padding: 1rem;
-        border-radius: 1.5rem;
-        width: 90%;
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        max-width: none;
+        transform: none;
       }
 
       .btn {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+        min-width: 60px;
+        height: 2rem;
+      }
+      
+      /* 移动端点赞按钮特殊样式 */
+      #like-btn {
+        min-width: 70px;
+      }
+
+      .color-picker-container {
+        min-width: auto;
+        width: auto;
+        padding: 0.3rem 0.6rem;
+      }
+
+
+
+      .screenshot-menu-content {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+
+      .share-menu-content {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+
+      .share-actions {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+
+      .link-input-group {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+
+      .copy-btn {
         width: 100%;
-        padding: 0.8rem;
+        justify-content: center;
       }
 
       .rotation-hint {
@@ -281,11 +623,35 @@
       <i class="fas fa-cube"></i> Mindverse Gallery
     </div>
     <div id="model-title" class="model-title">3D模型查看器</div>
+      <div class="like-container">
+        <button id="lang-toggle" class="lang-btn">
+          <i class="fas fa-globe"></i> EN
+        </button>
+      </div>
   </div>
 
   <div class="controls">
     <button id="back-btn" class="btn">
       <i class="fas fa-arrow-left"></i> 返回画廊
+    </button>
+    <button id="screenshot-btn" class="btn">
+      <i class="fas fa-camera"></i> 截图下载
+    </button>
+    <button id="share-btn" class="btn">
+      <i class="fas fa-share-alt"></i> 分享模型
+    </button>
+    <button id="like-btn" class="btn">
+      <i class="fas fa-heart"></i>
+      <span id="like-count">0</span>
+    </button>
+    <button id="replay-btn" class="btn">
+      <i class="fas fa-play"></i> 重播绘制
+    </button>
+    <button id="zoom-in-btn" class="btn">
+      <i class="fas fa-search-plus"></i> 放大
+    </button>
+    <button id="zoom-out-btn" class="btn">
+      <i class="fas fa-search-minus"></i> 缩小
     </button>
     <div class="color-picker-container">
       <div class="color-picker-label">
@@ -293,7 +659,7 @@
       </div>
       <div class="color-picker">
         <div
-          class="color-option active"
+          class="color-option"
           style="background: #4f46e5"
           data-color="#4f46e5"
         ></div>
@@ -303,7 +669,7 @@
           data-color="#7e22ce"
         ></div>
         <div
-          class="color-option"
+          class="color-option active"
           style="background: #0f172a"
           data-color="#0f172a"
         ></div>
@@ -319,10 +685,63 @@
         ></div>
       </div>
     </div>
+    
+
   </div>
 
-  <div class="rotation-hint">
-    <i class="fas fa-mouse-pointer"></i> 拖动鼠标旋转模型 | 滚轮缩放
+  <!-- 截图下载菜单 -->
+  <div id="screenshot-menu" class="screenshot-menu" style="display: none;">
+    <div class="screenshot-menu-content">
+      <h3>选择下载格式</h3>
+      <div class="screenshot-options">
+        <button id="download-jpg" class="screenshot-btn">
+          <i class="fas fa-image"></i> 下载 JPG
+        </button>
+        <button id="download-pdf" class="screenshot-btn">
+          <i class="fas fa-file-pdf"></i> 下载 PDF
+        </button>
+      </div>
+      <button id="close-screenshot-menu" class="close-btn">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- 分享菜单 -->
+  <div id="share-menu" class="share-menu" style="display: none;">
+    <div class="share-menu-content">
+      <h3>分享模型</h3>
+      <div class="share-options">
+        <div class="share-link-container">
+          <label for="share-link">分享链接:</label>
+          <div class="link-input-group">
+            <input type="text" id="share-link" readonly>
+            <button id="copy-link-btn" class="copy-btn">
+              <i class="fas fa-copy"></i> 复制
+            </button>
+          </div>
+        </div>
+        <div class="share-actions">
+          <button id="generate-new-link" class="share-action-btn">
+            <i class="fas fa-refresh"></i> 生成新链接
+          </button>
+        </div>
+      </div>
+      <button id="close-share-menu" class="close-btn">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- 二维码模态框 -->
+  <div id="qr-modal" class="qr-modal" style="display: none;">
+    <div class="qr-modal-content">
+      <h3>扫描二维码分享</h3>
+      <div id="qr-code-container"></div>
+      <button id="close-qr-modal" class="close-btn">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
   </div>
 
   <div id="error-message" class="error-message"></div>
@@ -336,6 +755,8 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/dist/qrcode.min.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
@@ -356,19 +777,112 @@
       // 解析 URL 参数
       const urlParams = new URLSearchParams(window.location.search);
       const modelId = urlParams.get('id');
+      const shareId = urlParams.get('share');
       
-      if (!modelId) {
-        showError('未提供模型 ID');
+      let finalModelId = 'Cathedral'; // 默认模型
+      
+      if (shareId) {
+        // 先尝试从本地映射获取模型ID
+        let localModelId = null;
+        try {
+          const localMappings = JSON.parse(localStorage.getItem('shareMapping') || '{}');
+          localModelId = localMappings[shareId];
+          console.log('本地分享映射查询:', { shareId, localModelId });
+        } catch (error) {
+          console.error('读取本地分享映射失败:', error);
+        }
+        
+        if (localModelId) {
+          finalModelId = localModelId;
+          console.log('使用本地映射的模型ID:', finalModelId);
+        } else {
+          // 如果本地没有，再尝试从API获取
+          try {
+            const res = await fetch(`/gallery2/api/share/${shareId}`);
+            const data = await res.json();
+            finalModelId = data.modelId || 'Cathedral';
+            console.log('使用API返回的模型ID:', finalModelId);
+          } catch (e) {
+            console.warn('API查询分享映射失败:', e);
+            finalModelId = 'Cathedral';
+          }
+        }
+      } else if (modelId) {
+        finalModelId = modelId;
+      }
+      
+      if (!finalModelId && !shareId) {
+        showError('未提供模型 ID 或分享链接');
         return;
       }
       
       // 更新模型标题
-      document.getElementById('model-title').textContent = formatModelName(modelId);
+      document.getElementById('model-title').textContent = formatModelName(finalModelId);
       
       let scene, camera, renderer, model;
       let isDragging = false;
+      let isShiftDragging = false;
       let previousMousePosition = { x: 0, y: 0 };
       let rotationSpeed = { x: 0, y: 0 };
+      let isReplaying = false;
+      let replayLines = [];
+      let currentReplayIndex = 0;
+      let replayInterval = null;
+      let originalLineGroups = new Map();
+      let globalLineWidthMultiplier = 0.05; // 全局线宽倍数
+      
+      // 多语言配置
+      let currentLang = 'zh';
+      const translations = {
+        zh: {
+          viewerTitle: '3D模型查看器',
+          backToGallery: '返回画廊',
+          screenshot: '截图下载',
+          share: '分享模型',
+          like: '点赞',
+          replay: '重播绘制',
+          stopReplay: '停止重播',
+          zoomIn: '放大',
+          zoomOut: '缩小',
+          backgroundColor: '背景颜色',
+          lineWidthBase: '线宽基础',
+          downloadJPG: '下载 JPG',
+          downloadPDF: '下载 PDF',
+          shareModel: '分享模型',
+          shareLink: '分享链接',
+          copy: '复制',
+          generateNewLink: '生成新链接',
+          qrCode: '二维码',
+          scanQR: '扫描二维码分享',
+          processing: '处理中...',
+          selectFormat: '选择下载格式',
+          close: '关闭'
+        },
+        en: {
+          viewerTitle: '3D Model Viewer',
+          backToGallery: 'Back to Gallery',
+          screenshot: 'Screenshot',
+          share: 'Share Model',
+          like: 'Like',
+          replay: 'Replay Drawing',
+          stopReplay: 'Stop Replay',
+          zoomIn: 'Zoom In',
+          zoomOut: 'Zoom Out',
+          backgroundColor: 'Background Color',
+          lineWidthBase: 'Line Width Base',
+          downloadJPG: 'Download JPG',
+          downloadPDF: 'Download PDF',
+          shareModel: 'Share Model',
+          shareLink: 'Share Link',
+          copy: 'Copy',
+          generateNewLink: 'Generate New Link',
+          qrCode: 'QR Code',
+          scanQR: 'Scan QR Code to Share',
+          processing: 'Processing...',
+          selectFormat: 'Select Download Format',
+          close: 'Close'
+        }
+      };
 
       const loadingOverlay = document.getElementById('loading-overlay');
       const progressBar = document.getElementById('progress-bar');
@@ -377,7 +891,7 @@
       async function init() {
         try {
           scene = new THREE.Scene();
-          scene.background = new THREE.Color(0x4f46e5);
+          scene.background = new THREE.Color(0x0f172a);
 
           camera = new THREE.PerspectiveCamera(
             60,
@@ -411,7 +925,8 @@
           scene.add(directionalLight2);
 
           setupControls();
-          await loadModel(modelId);
+          setupShareControls();
+          await loadModel(finalModelId);
           animate();
         } catch (err) {
           console.error('初始化错误:', err);
@@ -429,31 +944,40 @@
         // 滚轮缩放
         canvas.addEventListener('wheel', (e) => {
           e.preventDefault();
-          const zoomSpeed = 0.2;
+          const zoomSpeed = 0.5; // 增加缩放速度
           const delta = -Math.sign(e.deltaY) * zoomSpeed;
-          camera.position.z = Math.min(50, Math.max(5, camera.position.z + delta));
+          camera.position.z = Math.min(50, Math.max(2, camera.position.z + delta));
         });
 
-        // 鼠标拖拽旋转
+        // 鼠标拖拽旋转和平移
         canvas.addEventListener('mousedown', (e) => {
+          if (e.shiftKey) {
+            isShiftDragging = true;
+            isDragging = false;
+            canvas.style.cursor = 'move';
+          } else {
           isDragging = true;
+            isShiftDragging = false;
+            canvas.style.cursor = 'grabbing';
+          }
           previousMousePosition.x = e.clientX;
           previousMousePosition.y = e.clientY;
-          canvas.style.cursor = 'grabbing';
         });
 
         canvas.addEventListener('mouseup', () => {
           isDragging = false;
+          isShiftDragging = false;
           canvas.style.cursor = 'grab';
         });
 
         canvas.addEventListener('mouseleave', () => {
           isDragging = false;
+          isShiftDragging = false;
           canvas.style.cursor = 'grab';
         });
 
         canvas.addEventListener('mousemove', (e) => {
-          if (!isDragging) return;
+          if (!isDragging && !isShiftDragging) return;
 
           const deltaMove = {
             x: e.clientX - previousMousePosition.x,
@@ -461,9 +985,17 @@
           };
 
           if (model) {
+            if (isShiftDragging) {
+              // Shift+拖动：平移模型
+              const moveSpeed = 0.01;
+              model.position.x += deltaMove.x * moveSpeed;
+              model.position.y -= deltaMove.y * moveSpeed;
+            } else if (isDragging) {
+              // 普通拖动：旋转模型
             model.rotation.y += deltaMove.x * 0.005;
             model.rotation.x += deltaMove.y * 0.005;
             model.rotation.x = Math.min(Math.max(model.rotation.x, -Math.PI / 2), Math.PI / 2);
+            }
           }
 
           previousMousePosition.x = e.clientX;
@@ -482,6 +1014,54 @@
           window.location.href = '/gallery2/';
         });
 
+        // 截图功能
+        const screenshotBtn = document.getElementById('screenshot-btn');
+        const screenshotMenu = document.getElementById('screenshot-menu');
+        const closeScreenshotMenu = document.getElementById('close-screenshot-menu');
+        const downloadJpgBtn = document.getElementById('download-jpg');
+        const downloadPdfBtn = document.getElementById('download-pdf');
+
+        screenshotBtn.addEventListener('click', () => {
+          screenshotMenu.style.display = 'flex';
+        });
+
+        closeScreenshotMenu.addEventListener('click', () => {
+          screenshotMenu.style.display = 'none';
+        });
+
+        // 点击背景关闭菜单
+        screenshotMenu.addEventListener('click', (e) => {
+          if (e.target === screenshotMenu) {
+            screenshotMenu.style.display = 'none';
+          }
+        });
+
+        // 下载JPG
+        downloadJpgBtn.addEventListener('click', () => {
+          downloadJpgBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 处理中...';
+          downloadJpgBtn.disabled = true;
+          
+          setTimeout(() => {
+            takeScreenshot('jpg');
+            screenshotMenu.style.display = 'none';
+            downloadJpgBtn.innerHTML = '<i class="fas fa-image"></i> 下载 JPG';
+            downloadJpgBtn.disabled = false;
+          }, 100);
+        });
+
+        // 下载PDF
+        downloadPdfBtn.addEventListener('click', () => {
+          downloadPdfBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 处理中...';
+          downloadPdfBtn.disabled = true;
+          
+          setTimeout(() => {
+            takeScreenshot('pdf');
+            screenshotMenu.style.display = 'none';
+            downloadPdfBtn.innerHTML = '<i class="fas fa-file-pdf"></i> 下载 PDF';
+            downloadPdfBtn.disabled = false;
+          }, 100);
+        });
+
         // 背景色切换
         const colorOptions = document.querySelectorAll('.color-option');
         colorOptions.forEach((el) => {
@@ -492,6 +1072,191 @@
             document.body.style.background = color;
             scene.background = new THREE.Color(color);
           });
+        });
+
+        // 缩放功能
+        const zoomInBtn = document.getElementById('zoom-in-btn');
+        const zoomOutBtn = document.getElementById('zoom-out-btn');
+        
+        zoomInBtn.addEventListener('click', () => {
+          camera.position.z = Math.max(2, camera.position.z - 2);
+        });
+        
+        zoomOutBtn.addEventListener('click', () => {
+          camera.position.z = Math.min(50, camera.position.z + 2);
+        });
+
+        // 点赞功能 - 在setupControls中不设置事件监听器，在初始化后统一设置
+      }
+
+      // 分享功能事件监听器
+      function setupShareControls() {
+        const shareBtn = document.getElementById('share-btn');
+        const shareMenu = document.getElementById('share-menu');
+        const closeShareMenu = document.getElementById('close-share-menu');
+        const shareLinkInput = document.getElementById('share-link');
+        const copyLinkBtn = document.getElementById('copy-link-btn');
+        const generateNewLinkBtn = document.getElementById('generate-new-link');
+        const shareQrBtn = document.getElementById('share-qr');
+        const qrModal = document.getElementById('qr-modal');
+        const closeQrModal = document.getElementById('close-qr-modal');
+        const qrCodeContainer = document.getElementById('qr-code-container');
+
+        let currentShareLink = '';
+
+        // 分享按钮点击事件
+        shareBtn.addEventListener('click', () => {
+          generateShareLink();
+          shareMenu.style.display = 'flex';
+        });
+
+        // 关闭分享菜单
+        closeShareMenu.addEventListener('click', () => {
+          shareMenu.style.display = 'none';
+        });
+
+        // 点击背景关闭分享菜单
+        shareMenu.addEventListener('click', (e) => {
+          if (e.target === shareMenu) {
+            shareMenu.style.display = 'none';
+          }
+        });
+
+        // 复制链接
+        copyLinkBtn.addEventListener('click', () => {
+          copyToClipboard(currentShareLink); // 复制完整URL
+          copyLinkBtn.innerHTML = '<i class="fas fa-check"></i> 已复制';
+          copyLinkBtn.style.background = '#10b981';
+          setTimeout(() => {
+            copyLinkBtn.innerHTML = '<i class="fas fa-copy"></i> 复制';
+            copyLinkBtn.style.background = '';
+          }, 2000);
+        });
+
+        // 生成新链接
+        generateNewLinkBtn.addEventListener('click', () => {
+          generateShareLink();
+          generateNewLinkBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 生成中...';
+          setTimeout(() => {
+            generateNewLinkBtn.innerHTML = '<i class="fas fa-refresh"></i> 生成新链接';
+          }, 500);
+        });
+
+        // 分享功能函数
+        async function generateShareLink() {
+          // 生成完全随机的分享ID
+          const shareId = generateRandomString(32);
+          const baseUrl = 'https://www.icc-artgallery2025.top/gallery2/viewer.html';
+          
+          console.log('生成分享链接:', { shareId, modelId: finalModelId });
+          
+          try {
+            // 尝试保存映射到后端
+            const response = await fetch('/gallery2/api/share', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ shareId, modelId: finalModelId })
+            });
+            
+            if (response.ok) {
+              const result = await response.json();
+              console.log('分享API响应:', result);
+              
+              if (result.success) {
+                console.log('后端映射保存成功');
+              }
+            }
+          } catch (error) {
+            console.warn('后端映射保存失败，将使用前端本地映射:', error);
+          }
+          
+          // 无论后端是否成功，都保存本地映射并生成随机链接
+          saveLocalShareMapping(shareId, finalModelId);
+          
+          currentShareLink = `${baseUrl}?share=${shareId}`;
+          if (shareLinkInput) {
+            shareLinkInput.value = currentShareLink; // 显示完整链接
+          }
+          console.log('分享链接生成成功:', currentShareLink);
+        }
+        
+        // 本地分享映射管理
+        function saveLocalShareMapping(shareId, modelId) {
+          try {
+            let localMappings = JSON.parse(localStorage.getItem('shareMapping') || '{}');
+            localMappings[shareId] = modelId;
+            localStorage.setItem('shareMapping', JSON.stringify(localMappings));
+            console.log('本地分享映射已保存:', { shareId, modelId });
+          } catch (error) {
+            console.error('保存本地分享映射失败:', error);
+          }
+        }
+        
+        function getLocalShareMapping(shareId) {
+          try {
+            const localMappings = JSON.parse(localStorage.getItem('shareMapping') || '{}');
+            return localMappings[shareId];
+          } catch (error) {
+            console.error('读取本地分享映射失败:', error);
+            return null;
+          }
+        }
+
+        // 生成随机字符串
+        function generateRandomString(length) {
+          const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+          let result = '';
+          for (let i = 0; i < length; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+          }
+          return result;
+        }
+
+        // 复制到剪贴板
+        function copyToClipboard(text) {
+          if (navigator.clipboard && window.isSecureContext) {
+            // 使用现代 Clipboard API
+            navigator.clipboard.writeText(text).then(() => {
+              console.log('链接已复制到剪贴板');
+            }).catch(err => {
+              console.error('复制失败:', err);
+              fallbackCopyToClipboard(text);
+            });
+          } else {
+            // 降级方案
+            fallbackCopyToClipboard(text);
+          }
+        }
+
+        // 降级复制方案
+        function fallbackCopyToClipboard(text) {
+          const textArea = document.createElement('textarea');
+          textArea.value = text;
+          textArea.style.position = 'fixed';
+          textArea.style.left = '-999999px';
+          textArea.style.top = '-999999px';
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+          
+          try {
+            document.execCommand('copy');
+            console.log('链接已复制到剪贴板');
+          } catch (err) {
+            console.error('复制失败:', err);
+          }
+          
+          document.body.removeChild(textArea);
+        }
+
+        // Replay功能
+        const replayBtn = document.getElementById('replay-btn');
+        replayBtn.addEventListener('click', () => {
+          if (isReplaying) {
+            stopReplay();
+          } else {
+            startReplay();
+          }
         });
       }
 
@@ -518,41 +1283,137 @@
           
           const modelData = await response.json();
           
-          // 处理模型数据
-          const vertices = [];
-          const colors = [];
+          // 为replay功能准备数据
+          replayLines = [];
           
-          modelData.lines.forEach(line => {
+          // 按线宽分组数据
+          const lineGroups = new Map();
+          
+          modelData.lines.forEach((line, lineIndex) => {
             const color = line.color || { r: 1, g: 1, b: 1 };
             const points = line.points;
+            const lineWidth = line.width || 1;
+            
+            // 为replay准备线条数据
+            const lineData = {
+              points: points,
+              color: color,
+              width: lineWidth,
+              index: lineIndex
+            };
+            replayLines.push(lineData);
+            
+            // 按线宽分组
+            if (!lineGroups.has(lineWidth)) {
+              lineGroups.set(lineWidth, {
+                vertices: [],
+                colors: []
+              });
+            }
+            
+            const group = lineGroups.get(lineWidth);
             
             for (let i = 1; i < points.length; i++) {
               const prev = points[i-1];
               const curr = points[i];
               
               // 添加起点
-              vertices.push(prev.x, prev.y, prev.z);
-              colors.push(color.r, color.g, color.b);
+              group.vertices.push(prev.x, prev.y, prev.z);
+              group.colors.push(color.r, color.g, color.b);
               
               // 添加终点
-              vertices.push(curr.x, curr.y, curr.z);
-              colors.push(color.r, color.g, color.b);
+              group.vertices.push(curr.x, curr.y, curr.z);
+              group.colors.push(color.r, color.g, color.b);
             }
           });
+          
+          // 保存原始线宽数据
+          originalLineGroups = new Map(lineGroups);
+          
+          // 创建模型组
+          const modelGroup = new THREE.Group();
+          
+          // 为每个线宽创建独立的面片
+          lineGroups.forEach((groupData, lineWidth) => {
+            // 计算显示线宽（使用全局线宽倍数）
+            const displayWidth = Math.max(0.01, lineWidth * globalLineWidthMultiplier);
+            
+            // 为每个线段创建独立的面片
+            for (let i = 0; i < groupData.vertices.length; i += 6) {
+              const startX = groupData.vertices[i];
+              const startY = groupData.vertices[i + 1];
+              const startZ = groupData.vertices[i + 2];
+              const endX = groupData.vertices[i + 3];
+              const endY = groupData.vertices[i + 4];
+              const endZ = groupData.vertices[i + 5];
+              
+              const colorR = groupData.colors[i];
+              const colorG = groupData.colors[i + 1];
+              const colorB = groupData.colors[i + 2];
+              
+              // 计算线段方向
+              const direction = new THREE.Vector3(endX - startX, endY - startY, endZ - startZ);
+              const length = direction.length();
+              
+              if (length > 0) {
+                direction.normalize();
+                
+                // 计算垂直于线段的向量
+                const up = new THREE.Vector3(0, 1, 0);
+                const right = new THREE.Vector3().crossVectors(direction, up).normalize();
+                if (right.length() === 0) {
+                  up.set(1, 0, 0);
+                  right.crossVectors(direction, up).normalize();
+                }
+                
+                // 创建矩形的四个顶点
+                const halfWidth = displayWidth / 2;
+                const startRight = new THREE.Vector3().addScaledVector(right, halfWidth);
+                const startLeft = new THREE.Vector3().addScaledVector(right, -halfWidth);
+                const endRight = new THREE.Vector3().addScaledVector(right, halfWidth);
+                const endLeft = new THREE.Vector3().addScaledVector(right, -halfWidth);
+                
+                // 创建顶点数组
+                const vertices = [
+                  startX + startLeft.x, startY + startLeft.y, startZ + startLeft.z,
+                  startX + startRight.x, startY + startRight.y, startZ + startRight.z,
+                  endX + endRight.x, endY + endRight.y, endZ + endRight.z,
+                  endX + endLeft.x, endY + endLeft.y, endZ + endLeft.z
+                ];
+                
+                // 创建颜色数组
+                const colors = [
+                  colorR, colorG, colorB,
+                  colorR, colorG, colorB,
+                  colorR, colorG, colorB,
+                  colorR, colorG, colorB
+                ];
+                
+                // 创建索引数组（两个三角形组成一个矩形）
+                const indices = [0, 1, 2, 0, 2, 3];
           
           // 创建几何体
           const geometry = new THREE.BufferGeometry();
           geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
           geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+                geometry.setIndex(indices);
+                geometry.computeVertexNormals();
           
           // 创建材质
-          const material = new THREE.LineBasicMaterial({
+                const material = new THREE.MeshBasicMaterial({
             vertexColors: true,
-            linewidth: 2
+                  side: THREE.DoubleSide
+                });
+                
+                // 创建网格
+                const mesh = new THREE.Mesh(geometry, material);
+                modelGroup.add(mesh);
+              }
+            }
           });
           
           // 创建模型
-          model = new THREE.LineSegments(geometry, material);
+          model = modelGroup;
           scene.add(model);
           
           // 调整模型位置和相机
@@ -572,10 +1433,235 @@
           // 更新进度条
           progressBar.style.width = '100%';
           
+          // 加载点赞数据
+          await loadLikeData();
+          
         } catch (error) {
           console.error('模型加载失败:', error);
           showError('模型加载失败: ' + error.message);
           loadingOverlay.style.display = 'none';
+        }
+      }
+
+      // 截图功能
+      function takeScreenshot(format) {
+        try {
+          // 渲染当前场景
+          renderer.render(scene, camera);
+          
+          // 获取canvas数据
+          const canvas = renderer.domElement;
+          const dataURL = canvas.toDataURL('image/png');
+          
+          if (format === 'jpg') {
+            downloadAsJpg(dataURL);
+          } else if (format === 'pdf') {
+            downloadAsPdf(dataURL);
+          }
+        } catch (error) {
+          console.error('截图失败:', error);
+          showError('截图失败: ' + error.message);
+        }
+      }
+
+      // 下载为JPG
+      function downloadAsJpg(dataURL) {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        
+        img.onload = function() {
+          // 设置画布尺寸
+          canvas.width = img.width;
+          canvas.height = img.height;
+          
+          // 绘制图像
+          ctx.drawImage(img, 0, 0);
+          
+          // 转换为JPG并下载
+          const jpgDataURL = canvas.toDataURL('image/jpeg', 0.9);
+          downloadFile(jpgDataURL, `model-${finalModelId}-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.jpg`);
+        };
+        
+        img.src = dataURL;
+      }
+
+      // 下载为PDF
+      function downloadAsPdf(dataURL) {
+        try {
+          // 创建PDF文档
+          const pdf = new window.jspdf.jsPDF();
+          
+          // 获取图像尺寸
+          const img = new Image();
+          img.onload = function() {
+            const imgWidth = 190; // PDF页面宽度减去边距
+            const imgHeight = (img.height * imgWidth) / img.width;
+            
+            // 添加标题
+            pdf.setFontSize(16);
+            pdf.text(`3D模型: ${formatModelName(finalModelId)}`, 20, 20);
+            
+            // 添加时间戳
+            pdf.setFontSize(10);
+            pdf.text(`生成时间: ${new Date().toLocaleString('zh-CN')}`, 20, 30);
+            
+            // 添加图像
+            pdf.addImage(dataURL, 'PNG', 20, 40, imgWidth, imgHeight);
+            
+            // 下载PDF
+            pdf.save(`model-${finalModelId}-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.pdf`);
+          };
+          
+          img.src = dataURL;
+        } catch (error) {
+          console.error('PDF生成失败:', error);
+          showError('PDF生成失败，请尝试下载JPG格式');
+        }
+      }
+
+      // 通用下载函数
+      function downloadFile(dataURL, filename) {
+        const link = document.createElement('a');
+        link.href = dataURL;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      // Replay功能实现
+      function startReplay() {
+        if (isReplaying || !replayLines.length) return;
+        
+        isReplaying = true;
+        currentReplayIndex = 0;
+        
+        // 更新按钮状态
+        const replayBtn = document.getElementById('replay-btn');
+        replayBtn.innerHTML = '<i class="fas fa-stop"></i> 停止重播';
+        replayBtn.style.background = '#dc3545';
+        
+        // 隐藏原始模型
+        if (model) {
+          model.visible = false;
+        }
+        
+        // 创建replay模型组
+        const replayGroup = new THREE.Group();
+        scene.add(replayGroup);
+        
+        // 开始播放
+        replayInterval = setInterval(() => {
+          if (currentReplayIndex < replayLines.length) {
+            const lineData = replayLines[currentReplayIndex];
+            drawLine(lineData, replayGroup);
+            currentReplayIndex++;
+          } else {
+            stopReplay();
+          }
+        }, 100); // 每100ms绘制一条线
+      }
+      
+      function stopReplay() {
+        isReplaying = false;
+        
+        // 更新按钮状态
+        const replayBtn = document.getElementById('replay-btn');
+        replayBtn.innerHTML = '<i class="fas fa-play"></i> 重播绘制';
+        replayBtn.style.background = '';
+        
+        // 清除定时器
+        if (replayInterval) {
+          clearInterval(replayInterval);
+          replayInterval = null;
+        }
+        
+        // 移除replay模型组
+        scene.children = scene.children.filter(child => {
+          if (child.type === 'Group' && child !== model) {
+            return false; // 移除replay组
+          }
+          return true; // 保留其他对象
+        });
+        
+        // 显示原始模型
+        if (model) {
+          model.visible = true;
+        }
+      }
+      
+      function drawLine(lineData, group) {
+        const { points, color, width } = lineData;
+        
+        if (points.length < 2) return;
+        
+        // 计算显示线宽（使用全局线宽倍数）
+        const displayWidth = Math.max(0.01, width * globalLineWidthMultiplier);
+        
+        // 为每个线段创建独立的面片
+        for (let i = 1; i < points.length; i++) {
+          const prev = points[i-1];
+          const curr = points[i];
+          
+          // 计算线段方向
+          const direction = new THREE.Vector3(curr.x - prev.x, curr.y - prev.y, curr.z - prev.z);
+          const length = direction.length();
+          
+          if (length > 0) {
+            direction.normalize();
+            
+            // 计算垂直于线段的向量
+            const up = new THREE.Vector3(0, 1, 0);
+            const right = new THREE.Vector3().crossVectors(direction, up).normalize();
+            if (right.length() === 0) {
+              up.set(1, 0, 0);
+              right.crossVectors(direction, up).normalize();
+            }
+            
+            // 创建矩形的四个顶点
+            const halfWidth = displayWidth / 2;
+            const startRight = new THREE.Vector3().addScaledVector(right, halfWidth);
+            const startLeft = new THREE.Vector3().addScaledVector(right, -halfWidth);
+            const endRight = new THREE.Vector3().addScaledVector(right, halfWidth);
+            const endLeft = new THREE.Vector3().addScaledVector(right, -halfWidth);
+            
+            // 创建顶点数组
+            const vertices = [
+              prev.x + startLeft.x, prev.y + startLeft.y, prev.z + startLeft.z,
+              prev.x + startRight.x, prev.y + startRight.y, prev.z + startRight.z,
+              curr.x + endRight.x, curr.y + endRight.y, curr.z + endRight.z,
+              curr.x + endLeft.x, curr.y + endLeft.y, curr.z + endLeft.z
+            ];
+            
+            // 创建颜色数组
+            const colors = [
+              color.r, color.g, color.b,
+              color.r, color.g, color.b,
+              color.r, color.g, color.b,
+              color.r, color.g, color.b
+            ];
+            
+            // 创建索引数组（两个三角形组成一个矩形）
+            const indices = [0, 1, 2, 0, 2, 3];
+            
+            // 创建几何体
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+            geometry.setIndex(indices);
+            geometry.computeVertexNormals();
+            
+            // 创建材质
+            const material = new THREE.MeshBasicMaterial({
+              vertexColors: true,
+              side: THREE.DoubleSide
+            });
+            
+            // 创建网格
+            const mesh = new THREE.Mesh(geometry, material);
+            group.add(mesh);
+          }
         }
       }
 
@@ -592,6 +1678,8 @@
         renderer.render(scene, camera);
       }
 
+
+
       // 错误提示
       function showError(msg) {
         const errorDiv = document.getElementById('error-message');
@@ -604,14 +1692,190 @@
         }, 10000);
       }
 
+      // 语言切换函数
+      function switchLanguage() {
+        currentLang = currentLang === 'zh' ? 'en' : 'zh';
+        updateLanguage();
+        
+        // 更新语言切换按钮
+        const langBtn = document.getElementById('lang-toggle');
+        if (langBtn) {
+          langBtn.innerHTML = `<i class="fas fa-globe"></i> ${currentLang === 'zh' ? 'EN' : '中'}`;
+        }
+        
+        // 保存语言设置到localStorage
+        localStorage.setItem('gallery2_lang', currentLang);
+      }
+      
+      function updateLanguage() {
+        const t = translations[currentLang];
+        
+        // 更新模型标题
+        document.getElementById('model-title').textContent = t.viewerTitle;
+        
+        // 更新按钮文本
+        document.getElementById('back-btn').innerHTML = `<i class="fas fa-arrow-left"></i> ${t.backToGallery}`;
+        document.getElementById('screenshot-btn').innerHTML = `<i class="fas fa-camera"></i> ${t.screenshot}`;
+        document.getElementById('share-btn').innerHTML = `<i class="fas fa-share-alt"></i> ${t.share}`;
+        // 更新点赞按钮时保持事件监听器
+        const likeBtn = document.getElementById('like-btn');
+        const currentCount = likeData[finalModelId] || 0;
+        const heartIcon = likeBtn.querySelector('i');
+        const countSpan = likeBtn.querySelector('#like-count');
+        
+        if (countSpan) {
+          countSpan.textContent = currentCount;
+        } else {
+          // 如果span不存在，重新创建整个内容
+          likeBtn.innerHTML = `<i class="fas fa-heart"></i> <span id="like-count">${currentCount}</span>`;
+        }
+        document.getElementById('replay-btn').innerHTML = `<i class="fas fa-play"></i> ${t.replay}`;
+        document.getElementById('zoom-in-btn').innerHTML = `<i class="fas fa-search-plus"></i> ${t.zoomIn}`;
+        document.getElementById('zoom-out-btn').innerHTML = `<i class="fas fa-search-minus"></i> ${t.zoomOut}`;
+        
+        // 更新背景色标签（如果存在）
+        const colorPickerLabel = document.querySelector('.color-picker-label');
+        if (colorPickerLabel) {
+          colorPickerLabel.innerHTML = `<i class="fas fa-palette"></i> ${t.backgroundColor}`;
+        }
+        
+        // 更新截图菜单
+        document.querySelector('#screenshot-menu h3').textContent = t.selectFormat;
+        document.getElementById('download-jpg').innerHTML = `<i class="fas fa-image"></i> ${t.downloadJPG}`;
+        document.getElementById('download-pdf').innerHTML = `<i class="fas fa-file-pdf"></i> ${t.downloadPDF}`;
+        
+        // 更新分享菜单
+        document.querySelector('#share-menu h3').textContent = t.shareModel;
+        document.querySelector('#share-menu label').textContent = t.shareLink;
+        document.getElementById('copy-link-btn').innerHTML = `<i class="fas fa-copy"></i> ${t.copy}`;
+        document.getElementById('generate-new-link').innerHTML = `<i class="fas fa-refresh"></i> ${t.generateNewLink}`;
+      }
+
       // 格式化模型名称
       function formatModelName(id) {
-        if (!id) return '未命名模型';
+        if (!id) return currentLang === 'zh' ? '未命名模型' : 'Unnamed Model';
         return id.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
       }
 
+      // 点赞功能
+      let likeData = {};
+      let isLiked = false;
+
+      async function loadLikeData() {
+        try {
+          const response = await fetch('/gallery2/api/likes');
+          if (response.ok) {
+            likeData = await response.json();
+          } else {
+            likeData = {};
+          }
+        } catch {
+          likeData = {};
+        }
+        // 检查本地是否已点赞
+        isLiked = localStorage.getItem('liked_' + finalModelId) === '1';
+        updateLikeDisplay();
+      }
+
+      async function toggleLike() {
+        try {
+          isLiked = !isLiked;
+          if (isLiked) {
+            likeData[finalModelId] = (likeData[finalModelId] || 0) + 1;
+            localStorage.setItem('liked_' + finalModelId, '1');
+          } else {
+            likeData[finalModelId] = Math.max(0, (likeData[finalModelId] || 1) - 1);
+            localStorage.setItem('liked_' + finalModelId, '0');
+          }
+          updateLikeDisplay();
+          await saveLikeData();
+        } catch {
+          isLiked = !isLiked;
+          updateLikeDisplay();
+        }
+      }
+
+      function updateLikeDisplay() {
+        const likeBtn = document.getElementById('like-btn');
+        const likeCount = document.getElementById('like-count');
+        
+        const count = likeData[finalModelId] || 0;
+        likeCount.textContent = count;
+        
+        if (isLiked) {
+          likeBtn.classList.add('liked');
+        } else {
+          likeBtn.classList.remove('liked');
+        }
+      }
+
+      async function saveLikeData() {
+        try {
+          console.log('保存点赞数据到服务器:', likeData);
+          const response = await fetch('/gallery2/api/likes', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(likeData)
+          });
+          
+          if (!response.ok) {
+            throw new Error(`保存点赞数据失败: ${response.status}`);
+          }
+          
+          console.log('点赞数据保存成功');
+        } catch (error) {
+          console.error('保存点赞数据失败:', error);
+          throw error;
+        }
+      }
+
+
+      
+
+
       // 初始化
       await init();
+      
+      // 设置语言切换功能
+      const langBtn = document.getElementById('lang-toggle');
+      if (langBtn) {
+        langBtn.addEventListener('click', switchLanguage);
+      }
+      
+      // 加载保存的语言设置
+      const savedLang = localStorage.getItem('gallery2_lang');
+      if (savedLang && (savedLang === 'zh' || savedLang === 'en')) {
+        currentLang = savedLang;
+        updateLanguage();
+      }
+      
+      // 点赞按钮事件监听器（使用事件委托，更好的浏览器兼容性）
+      function setupLikeButton() {
+        // 移除现有的监听器（如果存在）
+        document.removeEventListener('click', handleLikeClick);
+        
+        // 使用事件委托来处理点赞按钮点击
+        document.addEventListener('click', handleLikeClick);
+        console.log('点赞按钮事件监听器已设置（事件委托）');
+      }
+      
+      function handleLikeClick(e) {
+        // 检查点击的是否是点赞按钮或其子元素
+        const target = e.target;
+        const likeBtn = target.closest('#like-btn');
+        
+        if (likeBtn) {
+          console.log('点赞按钮被点击，事件:', e);
+          e.preventDefault();
+          e.stopPropagation();
+          toggleLike();
+        }
+      }
+      
+      // 设置点赞按钮
+      setupLikeButton();
     });
   </script>
 </body>
